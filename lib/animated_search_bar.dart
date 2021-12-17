@@ -15,6 +15,7 @@ class AnimatedSearchBar extends StatefulWidget {
   ///  animationDuration in milliseconds -  int ,isRequired : No
   ///  searchStyle - TextStyle ,isRequired :  No
   ///  cursorColor - Color ,isRequired : No
+  ///  activateOnTextTap - bool ,isRequired : No
   const AnimatedSearchBar(
       {Key? key,
       this.label = "",
@@ -34,7 +35,8 @@ class AnimatedSearchBar extends StatefulWidget {
       this.animationDuration = 350,
       this.searchStyle = const TextStyle(color: Colors.black),
       this.cursorColor,
-      this.duration = const Duration(milliseconds: 300)})
+      this.duration = const Duration(milliseconds: 300),
+      this.activateOnTextTap = false})
       : super(key: key);
 
   final String label;
@@ -46,6 +48,7 @@ class AnimatedSearchBar extends StatefulWidget {
   final Color? cursorColor;
   final TextAlign alignment;
   final Duration duration;
+  final bool activateOnTextTap;
 
   @override
   _AnimatedSearchBarState createState() => _AnimatedSearchBarState();
@@ -60,7 +63,17 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
   Widget build(BuildContext context) {
     _debouncer.duration = widget.duration;
 
- Row(
+    // Use row as Root view
+    return GestureDetector(
+      onTap: () {
+        if (!_isSearch && widget.activateOnTextTap) {
+          setState(() {
+            _isSearch = true;
+            _fnSearch.requestFocus();
+          });
+        }
+      },
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -181,6 +194,7 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar> {
             },
           ),
         ],
+      ),
     );
   }
 }
